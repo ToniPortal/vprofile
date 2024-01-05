@@ -2,7 +2,7 @@
           agent any
           tools {
               maven "MAVEN3"
-              jdk "OracleJDK8"
+              jdk "JDK8"
           }
 
     environment {
@@ -20,9 +20,25 @@
 
           stages {
               stage('Build'){
-                  steps {
-                      sh 'mvn -s settings.xml -DskipTests install'
-                  }
+   
+            steps {
+                script {
+
+                    
+                    // Use withEnv block to set environment variables for this stage
+                    withEnv(["SNAP_REPO=${SNAP_REPO}", "NEXUS_USER=${NEXUS_USER}", "NEXUS_PASS=${NEXUS_PASS}",
+                             "RELEASE_REPO=${RELEASE_REPO}", "CENTRAL_REPO=${CENTRAL_REPO}",
+                             "NEXUSIP=${NEXUSIP}", "NEXUSPORT=${NEXUSPORT}", "NEXUS_GRP_REPO=${NEXUS_GRP_REPO}",
+                             "NEXUS_LOGIN=${NEXUS_LOGIN}"]) {
+                        // Now, environment variables are set for the duration of this block
+                    
+                        // Use the environment variables in your Maven build
+                        // sh 'mvn -s settings.xml -DskipTests install'
+                    }
+                }
+            }
+        }
+    
                   post {
                       success {
                           echo "Now Archiving."
